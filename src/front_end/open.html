@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blue Screen</title>
+    <style>
+        body {
+            background-color: blue;
+        }
+
+        form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+    <script>
+        function submitForm() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/api/v1/health", true);
+            xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
+            xhr.send();
+            window.location.href = "/api/v1/health";
+        }
+    </script>
+</head>
+<body>
+<form onsubmit="submitForm(); return false;">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <input type="submit" value="Login">
+</form>
+    
+</body>
+</html>
