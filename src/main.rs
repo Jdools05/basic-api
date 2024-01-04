@@ -16,10 +16,11 @@ async fn main() {
 
     spotify.run().await;
 
+    println!("Starting server");
 
-    // let api_service = OpenApiService::new(api_routes::Api, "API", "1.0.0").server("https:/0.0.0.0:3000");
-    // let ui = api_service.swagger_ui();
-    // let app = Route::new().nest("/", api_service).nest("/docs", ui);
+    let api_service = OpenApiService::new(api_routes::Api, "API", "1.0.0").server("https://localhost:3000");
+    let ui = api_service.swagger_ui();
+    let app = Route::new().nest("/", api_service).nest("/docs", ui);
 
-    // let _ = Server::new(TcpListener::bind("0.0.0.0:3000")).run(app).await;
+    let _ = Server::new(TcpListener::bind("localhost:3000")).run(app).await;
 }

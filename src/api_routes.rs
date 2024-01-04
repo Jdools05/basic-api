@@ -34,4 +34,13 @@ impl Api {
         }
     }
 
+    #[oai(path = "/api/v1/callback", method = "get")]
+    async fn callback(&self) -> Result<Html<String>, Error> {
+        let callback_html: Result<String, std::io::Error> = fs::read_to_string("src/front_end/callback.html");
+        match callback_html {
+            Ok(html) => Ok(Html(html)),
+            Err(_err) => Err(Error::from_status(StatusCode::INTERNAL_SERVER_ERROR)),
+        }
+    }
+
 }

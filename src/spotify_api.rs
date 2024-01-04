@@ -1,4 +1,4 @@
-use rspotify::{prelude::*,  Credentials, ClientCredsSpotify, model::{AlbumId, PlaylistId}};
+use rspotify::{prelude::*,  Credentials, ClientCredsSpotify, model::{AlbumId, PlaylistId, TrackId, Market, Country}, AuthCodeSpotify, OAuth, scopes, Config};
 
 
 pub struct SpotifyMain {}
@@ -10,17 +10,19 @@ impl SpotifyMain {
 
     pub async fn run(&self) {
         let creds = Credentials::from_env().unwrap();
+        let oauth = OAuth::from_env(scopes!("user-read-currently-playing")).unwrap();
 
-        let spotify = ClientCredsSpotify::new(creds);
+        let spotify = AuthCodeSpotify::with_config(creds, oauth, Config::default());
 
-        // Obtaining the access token. Requires to be mutable because the internal
-        // token will be modified. We don't need OAuth for this specific endpoint,
-        // so `...` is used instead of `prompt_for_user_token`.
-        spotify.request_token().await.unwrap();
+        let url = spotify.get_authorize_url(false).unwrap();
+
+        spotify.prompt_for_token(&url).await.unwrap();
+
+        println!("Token: {:#?}", spotify.get_token());
 
         // Running the requests
-        let playlist_id = PlaylistId::from_id("1PQyNaugjttLBkjJ0262NG").unwrap();
-        let playlist = spotify.playlist(playlist_id, None, None).await;
+        let playlist_id = TrackId::from_id("60PAzFNW3vAiAiVK6DRJfB").unwrap();
+        let playlist = spotify.track(playlist_id, Some(Market::Country(Country::UnitedStates))).await;
 
         println!("Response: {playlist:#?}");
     }
